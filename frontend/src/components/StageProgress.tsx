@@ -53,26 +53,40 @@ export function StageProgress({ upload, stages, order }: {
   }
 
   return (
-    <ol className="space-y-2">
-      {rows.map(([name, s, extra]) => {
+    <ol className="relative">
+      {rows.map(([name, s, extra], i) => {
         const l = LABELS[name];
+        const last = i === rows.length - 1;
         return (
-          <li key={name} className="flex items-start gap-3">
-            <span className="mt-0.5 shrink-0">
-              {s.state === "done" && <CircleCheck size={18} className="text-emerald-600" />}
-              {s.state === "running" && <LoaderCircle size={18} className="animate-spin text-sky-600" />}
-              {s.state === "error" && <CircleX size={18} className="text-rose-600" />}
-              {s.state === "pending" && <Circle size={18} className="text-slate-300 dark:text-slate-600" />}
+          <li key={name} className="relative flex items-start gap-3.5 pb-4 last:pb-0">
+            {!last && (
+              <span
+                aria-hidden
+                className={`absolute left-[10px] top-6 h-[calc(100%-1.25rem)] w-px ${s.state === "done" ? "bg-good/40" : "bg-hairline"}`}
+              />
+            )}
+            <span className="relative mt-px shrink-0 rounded-full bg-canvas">
+              {s.state === "done" && <CircleCheck size={21} className="fill-good/90 text-canvas" />}
+              {s.state === "running" && <LoaderCircle size={21} className="animate-spin text-accent-hover" />}
+              {s.state === "error" && <CircleX size={21} className="fill-bad text-canvas" />}
+              {s.state === "pending" && <Circle size={21} className="text-white/20" />}
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-baseline justify-between gap-x-2">
-                <span className={`text-sm font-medium ${s.state === "pending" ? "text-slate-400" : ""}`}>{l.title}</span>
-                {extra && <span className="text-xs tabular-nums text-slate-500">{extra}</span>}
+                <span className={`text-[15px] font-medium tracking-tight ${s.state === "pending" ? "text-ink-3" : s.state === "running" ? "text-accent-hover" : ""}`}>
+                  {l.title}
+                </span>
+                {extra && <span className="text-xs tabular-nums text-ink-2">{extra}</span>}
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">{l.desc}</p>
+              <p className="mt-0.5 text-xs text-ink-3">{l.desc}</p>
+              {name === "upload" && upload && !upload.done ? (
+                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <div className="progress-shimmer h-full rounded-full bg-gradient-to-r from-accent to-violet transition-all duration-300" style={{ width: `${upload.total ? (upload.loaded / upload.total) * 100 : 0}%` }} />
+                </div>
+              ) : null}
               {name === "faces" && s.state === "running" && s.total ? (
-                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-                  <div className="h-full bg-sky-500 transition-all" style={{ width: `${((s.done ?? 0) / s.total) * 100}%` }} />
+                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <div className="progress-shimmer h-full rounded-full bg-gradient-to-r from-accent to-violet transition-all duration-500" style={{ width: `${((s.done ?? 0) / s.total) * 100}%` }} />
                 </div>
               ) : null}
             </div>

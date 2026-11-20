@@ -16,7 +16,7 @@ export function VideoPreview({ file }: { file: File }) {
   }, [file]);
   if (!url) return null;
   return failed ? (
-    <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-lg bg-slate-100 p-4 text-center text-sm text-slate-500 dark:bg-slate-800">
+    <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-2xl bg-canvas p-4 text-center text-sm text-ink-2">
       <VideoOff size={28} />
       This browser cannot play this video format. The analysis does not depend on the preview and still works.
     </div>
@@ -28,7 +28,7 @@ export function VideoPreview({ file }: { file: File }) {
       playsInline
       preload="metadata"
       onError={() => setFailed(true)}
-      className="aspect-video w-full rounded-lg bg-black object-contain"
+      className="aspect-video w-full rounded-2xl bg-black object-contain"
     />
   );
 }

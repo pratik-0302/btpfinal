@@ -22,35 +22,38 @@ export function ErrorPanel({ error, onRestartWorker, onReset }: {
 }) {
   const [show, setShow] = useState(false);
   const canRestart = ["OUT_OF_MEMORY", "WORKER_CRASHED"].includes(error.code);
+  const cancelled = error.code === "CANCELLED";
   return (
-    <section className="card border-rose-300 bg-rose-50 dark:border-rose-900 dark:bg-rose-950/30" role="alert">
-      <div className="flex gap-3">
-        <CircleX className="mt-0.5 shrink-0 text-rose-600" size={22} />
+    <section className={`card animate-rise ${cancelled ? "" : "!border-bad/25"}`} role="alert">
+      <div className="flex gap-4">
+        <span className={`grid size-11 shrink-0 place-items-center rounded-2xl ${cancelled ? "border border-white/10 bg-white/5 text-ink-2" : "border border-bad/30 bg-bad/10 text-bad"}`}>
+          <CircleX size={24} />
+        </span>
         <div className="min-w-0 flex-1">
-          <h2 className="font-semibold text-rose-800 dark:text-rose-300">{error.code === "CANCELLED" ? "Cancelled" : "Analysis failed"}</h2>
-          <p className="mt-1 text-sm">{error.message}</p>
-          {HINTS[error.code] && <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{HINTS[error.code]}</p>}
-          <p className="mt-2 text-xs text-slate-500">
+          <h2 className="text-xl font-semibold tracking-tight">{cancelled ? "Analysis cancelled" : "Analysis failed"}</h2>
+          <p className="mt-1.5 text-[15px] text-ink">{error.message}</p>
+          {HINTS[error.code] && <p className="mt-1 text-[15px] text-ink-2">{HINTS[error.code]}</p>}
+          <p className="mt-3 text-xs text-ink-3">
             Code {error.code}
             {error.stage ? ` · stage: ${error.stage}` : ""}
           </p>
           {error.detail && (
             <div className="mt-2">
-              <button type="button" className="text-xs underline" onClick={() => setShow(!show)}>
+              <button type="button" className="btn-link !text-xs" onClick={() => setShow(!show)}>
                 {show ? "Hide" : "Show"} technical details
               </button>
               {show && (
-                <pre className="mt-1 max-h-60 overflow-auto whitespace-pre-wrap rounded bg-white p-2 text-[11px] dark:bg-slate-900">{error.detail}</pre>
+                <pre className="mt-2 max-h-60 overflow-auto whitespace-pre-wrap rounded-xl border border-white/10 bg-black/30 p-3 text-[11px] text-ink-2">{error.detail}</pre>
               )}
             </div>
           )}
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-5 flex flex-wrap gap-2">
             {canRestart && onRestartWorker && (
-              <button type="button" onClick={onRestartWorker} className="inline-flex items-center gap-1 rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700">
+              <button type="button" onClick={onRestartWorker} className="btn-primary">
                 <RefreshCw size={14} /> Restart analysis worker
               </button>
             )}
-            <button type="button" onClick={onReset} className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm hover:bg-white dark:border-slate-700 dark:hover:bg-slate-800">
+            <button type="button" onClick={onReset} className={canRestart ? "btn-secondary" : "btn-primary"}>
               Choose another video
             </button>
           </div>
