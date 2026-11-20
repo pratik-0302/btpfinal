@@ -1,0 +1,29 @@
+# Python 3.12, Apple Silicon (arm64) macOS 14+. Versions checked against PyPI metadata (Nov 2026).
+# facenet-pytorch is NOT listed here: its metadata pins torch<2.3 / numpy<2 / Pillow<10.3, so it is
+# installed separately with --no-deps (setup.sh does this). Its real runtime needs (torch, torchvision,
+# numpy, Pillow, requests, tqdm) are listed below.
+
+# model
+torch==2.15.0
+torchvision==0.29.2
+numpy==2.5.4
+scipy==1.18.1
+scikit-learn==1.6.1          # must match lipsync_detector_v4.pkl (saved with 1.6.1)
+
+# video / audio
+av==19.0.2
+opencv-python-headless==5.0.0.93
+python_speech_features==0.6
+pillow==13.0.0
+requests>=2.32,<3
+tqdm>=4.66,<5
+
+# server
+fastapi==0.162.0
+uvicorn==0.54.0
+python-multipart==0.0.33
+pydantic==2.14.3
+psutil==7.2.2
+
+# tools (reference checks)
+pandas>=2.2,<4

@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+data/
+models/*.pt
+models/*.pkl
+models/*.part
+models/device_check.json
+frontend/node_modules/
+requirements.lock
+.DS_Store
