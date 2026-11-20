@@ -19,7 +19,18 @@ Browser (React)  ──HTTP / SSE──►  FastAPI (127.0.0.1:8000, no torch)  
 ## Quick start — run it on your Mac
 
 Needs an **Apple Silicon Mac** (M1/M2/M3/M4) and about 10 GB free disk; 16 GB RAM recommended.
-Paste these commands into **Terminal**, one block at a time.
+
+**Fastest way — one script does everything** (installs Python 3.12 if needed, downloads and checks the
+model files, sets up, then starts the app; run it again any time to just start the app):
+```bash
+cd ~/Downloads
+git clone https://github.com/pratik-0302/btpfinal
+cd btpfinal
+./install_and_run.sh
+```
+If it says Homebrew is needed, install Homebrew with the command it prints, then run `./install_and_run.sh` again.
+
+**Or step by step** — paste these commands into **Terminal**, one block at a time.
 
 **1. Install the tools** (one time)
 ```bash
