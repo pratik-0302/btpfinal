@@ -7,7 +7,7 @@ import { Card, InfoTip, KV } from "./common";
 function Section({ title, children, open = false }: { title: string; children: ReactNode; open?: boolean }) {
   const [o, setO] = useState(open);
   return (
-    <div className="border-t border-slate-200 py-2 first:border-t-0 dark:border-slate-800">
+    <div className="border-t border-white/10 py-2 first:border-t-0">
       <button type="button" onClick={() => setO(!o)} className="flex w-full items-center gap-1 text-left text-sm font-medium">
         {o ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
         {title}
@@ -26,7 +26,7 @@ export function DetailsPanel({ r }: { r: AnalysisResult }) {
   return (
     <Card title="Technical details" icon={<Cpu size={16} />}>
       <Section title="Deepfake check per 6-second segment" open>
-        <p className="mb-2 flex items-center gap-1 text-xs text-slate-500">
+        <p className="mb-2 flex items-center gap-1 text-xs text-ink-2">
           Raw classifier output per segment; the clip's value is their average in logit space. <InfoTip k="segment_p" />
         </p>
         <div className="space-y-1">
@@ -34,11 +34,11 @@ export function DetailsPanel({ r }: { r: AnalysisResult }) {
             const span = d.segment_spans_s?.[i];
             return (
               <div key={i} className="flex items-center gap-2 text-xs">
-                <span className="w-28 shrink-0 tabular-nums text-slate-500">
+                <span className="w-28 shrink-0 tabular-nums text-ink-2">
                   {span ? `${span[0].toFixed(1)}–${span[1].toFixed(1)} s` : `segment ${i + 1}`}
                 </span>
-                <div className="h-2 flex-1 overflow-hidden rounded bg-slate-200 dark:bg-slate-700">
-                  <div className="h-full bg-slate-500" style={{ width: `${p * 100}%` }} />
+                <div className="h-2 flex-1 overflow-hidden rounded bg-white/10">
+                  <div className="h-full bg-gradient-to-r from-accent to-violet" style={{ width: `${p * 100}%` }} />
                 </div>
                 <span className="w-12 text-right tabular-nums">{p.toFixed(3)}</span>
               </div>

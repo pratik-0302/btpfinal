@@ -10,11 +10,11 @@ export function MouthCrops({ r }: { r: AnalysisResult }) {
   if (!c) return null;
   return (
     <Card title="What the model looked at" icon={<ScanFace size={16} />}>
-      <p className="mb-2 text-xs text-slate-500">
+      <p className="mb-2 text-xs text-ink-2">
         {c.count} of the aligned mouth crops given to AV-HuBERT. If these do not show a mouth, the face was not found
         correctly and the verdict should not be trusted.
       </p>
-      <div className="overflow-x-auto rounded border border-slate-200 bg-black dark:border-slate-700">
+      <div className="overflow-x-auto rounded-xl border border-white/10 bg-black">
         <img
           src={`data:image/png;base64,${c.png_base64}`}
           alt="sampled mouth crops"
@@ -22,7 +22,7 @@ export function MouthCrops({ r }: { r: AnalysisResult }) {
           style={{ width: `${c.count * 96}px` }}
         />
       </div>
-      <div className="mt-1 flex overflow-x-auto text-[10px] tabular-nums text-slate-500">
+      <div className="mt-1 flex overflow-x-auto text-[10px] tabular-nums text-ink-2">
         {c.times_s.map((t, i) => (
           <span key={i} className="shrink-0 text-center" style={{ width: 96 }}>
             {t.toFixed(1)} s

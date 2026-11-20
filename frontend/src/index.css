@@ -1,22 +1,450 @@
 @import "tailwindcss";
 
+/* Dark-only design: the existing `dark:` variants always apply. */
+@custom-variant dark (&);
+
+@theme {
+  --font-sans: Inter, Geist, -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+  --color-canvas: #080d19;
+  --color-surface: #101827;
+  --color-ink: #f8fafc;
+  --color-ink-2: #94a3b8;
+  --color-ink-3: #64748b;
+  --color-hairline: rgb(255 255 255 / 0.1);
+  --color-accent: #3b82f6;
+  --color-accent-hover: #60a5fa;
+  --color-violet: #8b5cf6;
+  --color-good: #4ade80;
+  --color-warn: #fbbf24;
+  --color-bad: #f87171;
+}
+
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  @apply bg-canvas text-ink antialiased;
+  font-family: var(--font-sans);
+  letter-spacing: -0.006em;
 }
 
-.card {
-  @apply rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900;
+::selection {
+  background: rgb(139 92 246 / 0.35);
 }
 
-.card-title {
-  @apply mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400;
+/* ---------------------------------------------------------------- ambient background (cheap: gradients + transforms) */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px 560px at 50% -12%, rgb(59 130 246 / 0.13), transparent 62%),
+    radial-gradient(900px 600px at 100% 45%, rgb(139 92 246 / 0.05), transparent 65%),
+    radial-gradient(800px 600px at 0% 80%, rgb(59 130 246 / 0.04), transparent 65%),
+    linear-gradient(180deg, #080d19 0%, #0a1020 50%, #080d19 100%);
+}
+
+.ambient::before,
+.ambient::after {
+  content: "";
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 9999px;
+  will-change: transform;
+}
+
+.ambient::before {
+  top: -25vmax;
+  left: -20vmax;
+  background: radial-gradient(closest-side, rgb(59 130 246 / 0.12), transparent);
+  animation: drift-a 28s ease-in-out infinite alternate;
+}
+
+.ambient::after {
+  bottom: -30vmax;
+  right: -20vmax;
+  background: radial-gradient(closest-side, rgb(139 92 246 / 0.11), transparent);
+  animation: drift-b 34s ease-in-out infinite alternate;
+}
+
+.ambient-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.018) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 50% at 50% 0%, #000 30%, transparent 75%);
+}
+
+@keyframes drift-a {
+  to {
+    transform: translate(18vmax, 12vmax) scale(1.1);
+  }
+}
+
+@keyframes drift-b {
+  to {
+    transform: translate(-16vmax, -10vmax) scale(1.15);
+  }
+}
+
+@layer components {
+  /* ---------------------------------------------------------------- glass surfaces */
+  /* Cards are translucent without backdrop-filter: the background is already soft, and many blurred layers
+     over an animated background would cost GPU time. Only the navbar and upload panel use real blur. */
+  .card {
+    @apply min-w-0 rounded-3xl border border-white/10 bg-white/[0.04] p-5 sm:p-7;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 24px 60px -30px rgb(0 0 0 / 0.7);
+  }
+
+  .card-title {
+    @apply mb-4 flex items-center gap-2 text-lg font-semibold tracking-tight text-ink;
+  }
+
+  .card-title > svg {
+    @apply text-accent-hover;
+  }
+
+  .glass {
+    @apply border border-white/10 bg-white/[0.05] backdrop-blur-2xl backdrop-saturate-150;
+  }
+
+  .tile {
+    @apply rounded-2xl border border-white/[0.06] bg-white/[0.03] px-4 py-3;
+  }
+
+  .icon-chip {
+    @apply grid place-items-center rounded-xl border border-white/10 bg-gradient-to-br from-accent/25 to-violet/25 text-ink;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 8px 24px -10px rgb(99 102 241 / 0.6);
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-[#93c5fd] via-[#a5b4fc] to-[#c4b5fd] bg-clip-text text-transparent;
+  }
+
+  /* ---------------------------------------------------------------- controls */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-accent to-violet px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-px hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-40;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 10px 30px -10px rgb(99 102 241 / 0.8);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-4 py-1.5 text-sm font-medium text-ink transition-colors duration-200 hover:border-white/20 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+  }
+
+  .btn-link {
+    @apply inline-flex items-center gap-1.5 text-sm font-medium text-ink-2 transition-colors hover:text-ink;
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.14em] text-ink-2;
+  }
+}
+
+/* ---------------------------------------------------------------- animated gradient border (upload area) */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.glow-border {
+  position: relative;
+  border-radius: 1.75rem;
+  padding: 1px;
+  background: conic-gradient(from var(--angle), rgb(59 130 246 / 0.7), rgb(139 92 246 / 0.15) 25%, rgb(139 92 246 / 0.7) 50%, rgb(59 130 246 / 0.15) 75%, rgb(59 130 246 / 0.7));
+  animation: spin-angle 8s linear infinite;
+}
+
+.glow-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: inherit;
+  filter: blur(18px);
+  opacity: 0.35;
+}
+
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+/* ---------------------------------------------------------------- motion */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rise-1 {
+  animation-delay: 90ms;
+}
+
+.rise-2 {
+  animation-delay: 180ms;
+}
+
+.rise-3 {
+  animation-delay: 270ms;
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float {
+  animation: float 3.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+
+.progress-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 50%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-float,
+  .glow-border,
+  .ambient::before,
+  .ambient::after,
+  .progress-shimmer::after {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------- charts (Recharts) on dark glass */
+.recharts-cartesian-axis-tick-value {
+  fill: #94a3b8;
+}
+
+.recharts-cartesian-axis-line,
+.recharts-cartesian-axis-tick-line {
+  stroke: rgb(255 255 255 / 0.15);
+}
+
+.recharts-default-tooltip {
+  background: rgb(16 24 39 / 0.92) !important;
+  border: 1px solid rgb(255 255 255 / 0.12) !important;
+  border-radius: 12px;
+  color: #f8fafc;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.5);
 }
 
 .pixelated {
   image-rendering: pixelated;
+}
+
+/* ---------------------------------------------------------------- evidence detail pages: the page heading replaces the card title */
+.evidence-page .card-title {
+  display: none;
+}
+
+.evidence-page .card > div:first-child:has(> h2:only-child) {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- About page: pipeline connector with a travelling light */
+.flow-line,
+.flow-line-v {
+  background-color: rgb(255 255 255 / 0.12);
+  background-repeat: no-repeat;
+}
+
+.flow-line {
+  background-image: linear-gradient(90deg, transparent, rgb(139 92 246 / 0.9), rgb(59 130 246 / 0.9), transparent);
+  background-size: 30% 100%;
+  animation: flow-x 3.5s ease-in-out infinite;
+}
+
+.flow-line-v {
+  background-image: linear-gradient(180deg, transparent, rgb(139 92 246 / 0.9), rgb(59 130 246 / 0.9), transparent);
+  background-size: 100% 30%;
+  animation: flow-y 3.5s ease-in-out infinite;
+}
+
+@keyframes flow-x {
+  from {
+    background-position: -40% 0;
+  }
+  to {
+    background-position: 140% 0;
+  }
+}
+
+@keyframes flow-y {
+  from {
+    background-position: 0 -40%;
+  }
+  to {
+    background-position: 0 140%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-line,
+  .flow-line-v {
+    animation: none;
+    background-image: none;
+  }
+}
+
+/* ---------------------------------------------------------------- glass card with a gradient edge (About page) */
+@layer components {
+  .glass-edge {
+    @apply relative rounded-3xl border border-transparent transition-[box-shadow,transform] duration-300;
+    background:
+      linear-gradient(rgb(13 19 34 / 0.94), rgb(13 19 34 / 0.94)) padding-box,
+      linear-gradient(140deg, rgb(96 165 250 / 0.45), rgb(255 255 255 / 0.07) 40%, rgb(255 255 255 / 0.05) 60%, rgb(167 139 250 / 0.45)) border-box;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 24px 60px -30px rgb(0 0 0 / 0.8);
+  }
+
+  .glass-edge-hover:hover {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 0 0 1px rgb(129 140 248 / 0.18), 0 24px 60px -24px rgb(99 102 241 / 0.45);
+    transform: translateY(-2px);
+  }
+}
+
+/* smooth height animation for expandable tiles */
+.expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.expand[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.expand > div {
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------- landing refinements */
+/* deeper glass behind the upload zone */
+.upload-shell {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgb(99 102 241 / 0.10), transparent 60%),
+    linear-gradient(180deg, rgb(15 22 40 / 0.92), rgb(10 15 28 / 0.95));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.07), 0 40px 100px -40px rgb(0 0 0 / 0.9);
+  backdrop-filter: blur(24px) saturate(1.4);
+}
+
+/* cursor-following light on feature cards */
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 0%), rgb(99 102 241 / 0.14), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* decorative audiovisual illustration */
+.av-bar {
+  animation: av-bar 1.26s ease-in-out infinite alternate;
+  transform-box: view-box;
+}
+
+.av-lip {
+  animation: av-lip 0.63s ease-in-out infinite alternate;
+  transform-box: view-box;
+  transform-origin: 70px 48px;
+}
+
+.av-gap {
+  animation: av-gap 0.63s ease-in-out infinite alternate;
+  transform-box: view-box;
+  transform-origin: 70px 48px;
+}
+
+.av-link {
+  animation: av-dash 1.2s linear infinite;
+}
+
+@keyframes av-bar {
+  from {
+    transform: scaleY(0.35);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes av-lip {
+  from {
+    transform: scaleY(0.45);
+  }
+  to {
+    transform: scaleY(1.05);
+  }
+}
+
+@keyframes av-gap {
+  from {
+    transform: scaleY(0.3);
+    opacity: 0.2;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes av-dash {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .av-bar,
+  .av-lip,
+  .av-gap,
+  .av-link {
+    animation: none;
+  }
 }

@@ -40,14 +40,14 @@ export function AgreementChart({ r }: { r: AnalysisResult }) {
       title={<span className="flex items-center gap-1">Lip–speech agreement over time <InfoTip k="agreement" /></span>}
       icon={<LineIcon size={16} />}
       right={
-        <div className="flex flex-wrap gap-3 text-xs text-slate-500">
+        <div className="flex flex-wrap gap-3 text-xs text-ink-2">
           <Legend colour="#22c55e" label="lips match the speech" />
           <Legend colour="#ef4444" label="no match" />
           <Legend colour="#94a3b8" label="unclear" />
         </div>
       }
     >
-      <p className="mb-2 text-xs text-slate-500">
+      <p className="mb-2 text-xs text-ink-2">
         Audio offset used: {r.sync_check.best_offset_ms > 0 ? "+" : ""}
         {r.sync_check.best_offset_ms} ms. Coloured bands are the 2-second speech windows the sync check judged
         ({tl.windows_s.length} windows).
@@ -65,14 +65,14 @@ export function AgreementChart({ r }: { r: AnalysisResult }) {
             <Tooltip
               formatter={(v) => (typeof v === "number" ? v.toFixed(3) : String(v))}
               labelFormatter={(l) => `${Number(l).toFixed(2)} s`}
-              contentStyle={{ fontSize: 12 }}
+              contentStyle={{ fontSize: 12 }} labelStyle={{ color: "#94a3b8" }}
             />
-            <Line type="monotone" dataKey="agreement" name="cosine agreement" stroke="#2563eb" dot={false} strokeWidth={1.4} isAnimationActive={false} />
+            <Line type="monotone" dataKey="agreement" name="cosine agreement" stroke="#60a5fa" dot={false} strokeWidth={1.4} isAnimationActive={false} />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
       <div className="mt-3">
-        <div className="mb-1 text-xs font-medium text-slate-500">Speech level (dBFS per 40 ms) — shaded frames count as speech</div>
+        <div className="mb-1 text-xs font-medium text-ink-2">Speech level (dBFS per 40 ms) — shaded frames count as speech</div>
         <div className="h-20">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 0, right: 12, bottom: 0, left: -12 }}>
@@ -80,7 +80,7 @@ export function AgreementChart({ r }: { r: AnalysisResult }) {
               <YAxis yAxisId="e" domain={[energyMin, 0]} fontSize={10} tickFormatter={(v: number) => v.toFixed(0)} />
               <YAxis yAxisId="s" domain={[0, 1]} hide />
               <Area yAxisId="s" type="stepAfter" dataKey="speech" fill="#a855f7" fillOpacity={0.15} stroke="none" isAnimationActive={false} />
-              <Line yAxisId="e" type="monotone" dataKey="energy" stroke="#7c3aed" dot={false} strokeWidth={1} isAnimationActive={false} />
+              <Line yAxisId="e" type="monotone" dataKey="energy" stroke="#a78bfa" dot={false} strokeWidth={1} isAnimationActive={false} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>

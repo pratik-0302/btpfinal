@@ -22,7 +22,7 @@ export function AudioPanel({ r }: { r: AnalysisResult }) {
       {wf && (
         <div>
           <div className="mb-1 flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Waveform envelope (16 kHz mono, per 40 ms)</span>
+            <span className="text-xs font-medium text-ink-2">Waveform envelope (16 kHz mono, per 40 ms)</span>
             <NewCalcBadge text={docs.waveform ?? "Display only."} />
           </div>
           <div className="h-24">
@@ -30,7 +30,7 @@ export function AudioPanel({ r }: { r: AnalysisResult }) {
               <AreaChart data={data} margin={{ top: 4, right: 12, bottom: 0, left: -12 }}>
                 <XAxis dataKey="t" type="number" domain={[0, tMax]} tickFormatter={secondsTick} fontSize={10} />
                 <YAxis domain={[-1, 1]} fontSize={10} ticks={[-1, 0, 1]} />
-                <Area dataKey="range" stroke="#0ea5e9" fill="#0ea5e9" fillOpacity={0.35} isAnimationActive={false} />
+                <Area dataKey="range" stroke="#60a5fa" fill="#3b82f6" fillOpacity={0.35} isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -39,14 +39,14 @@ export function AudioPanel({ r }: { r: AnalysisResult }) {
       {feats && feats.values.length > 0 && (
         <div className="mt-4">
           <div className="mb-1 flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">
+            <span className="text-xs font-medium text-ink-2">
               Log-mel filterbank energies ({feats.bands} bands, low frequencies at the bottom) — the model's audio input features
             </span>
             <NewCalcBadge text={docs.audio_features ?? "Display only."} />
           </div>
           <Heatmap values={feats.values} min={feats.min} max={feats.max} height={110} label="log-mel filterbank energies over time" />
           <div className="mt-1 flex justify-between">
-            <span className="text-[11px] text-slate-500">time →</span>
+            <span className="text-[11px] text-ink-2">time →</span>
             <ColourScale min={feats.min} max={feats.max} unit="log energy" />
           </div>
         </div>

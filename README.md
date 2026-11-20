@@ -16,14 +16,79 @@ Browser (React)  ──HTTP / SSE──►  FastAPI (127.0.0.1:8000, no torch)  
 * ~6 GB free disk (models 5.2 GB + packages).
 * Optional: `brew install ffmpeg` — lets the detector read unusual video formats PyAV cannot open.
 
-## Setup on a new Mac
-1. Copy this whole `lipsync_app` folder to the Mac.
-2. Copy the two model files into `lipsync_app/models/` (see `models/README.txt`):
-   * `large_vox_iter5.pt` (3.91 GB, AV-HuBERT checkpoint)
-   * `lipsync_detector_v4.pkl` (7 KB, trained classifiers)
-3. Run `./setup.sh`. It creates `.venv`, installs the pinned packages, checks the detector code against the
-   notebook (checksums), creates `models/avhubert_slim.pt` (one time, ~1 min, needs ~5.5 GB RAM) and runs the unit tests.
-4. Run `./run.sh` and the browser opens **http://127.0.0.1:8000** when the model is ready.
+## Quick start — run it on your Mac
+
+Needs an **Apple Silicon Mac** (M1/M2/M3/M4) and about 10 GB free disk; 16 GB RAM recommended.
+
+**Fastest way — one script does everything** (installs Python 3.12 if needed, downloads and checks the
+model files, sets up, then starts the app; run it again any time to just start the app):
+```bash
+cd ~/Downloads
+git clone https://github.com/pratik-0302/btpfinal
+cd btpfinal
+./install_and_run.sh
+```
+If it says Homebrew is needed, install Homebrew with the command it prints, then run `./install_and_run.sh` again.
+
+**Or step by step** — paste these commands into **Terminal**, one block at a time.
+
+**1. Install the tools** (one time)
+```bash
+# Homebrew — skip if `brew --version` already works
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Python 3.12
+brew install python@3.12
+```
+
+**2. Download the app**
+```bash
+cd ~/Downloads
+git clone https://github.com/pratik-0302/btpfinal
+cd btpfinal
+```
+
+**3. Download the two model files** (3.9 GB, one time)
+```bash
+# AV-HuBERT Large checkpoint, from Meta's official download server
+curl -L -o models/large_vox_iter5.pt "https://dl.fbaipublicfiles.com/avhubert/model/lrs3_vox/clean-pretrain/large_vox_iter5.pt"
+
+# the trained classifiers of this project
+curl -L -o models/lipsync_detector_v4.pkl "https://drive.usercontent.google.com/download?id=1tZHuCFPRO9gZrIFIq-ooaP-Vnjl_b2dU&export=download&confirm=t"
+
+# check: the sizes must be exactly 3905065977 and 7001 bytes
+ls -l models/
+```
+
+**4. Set up** (one time, about 5 minutes)
+```bash
+./setup.sh
+```
+It ends with `Setup complete. Start the app with: ./run.sh`.
+
+**5. Start the app**
+```bash
+./run.sh
+```
+The browser opens **http://127.0.0.1:8000** by itself once the model has loaded (about 30 s).
+Drop a video with a talking face and wait for the verdict. **To stop:** press `Ctrl + C` in Terminal.
+
+**Every time after that:** `cd ~/Downloads/btpfinal && ./run.sh`
+
+| If you see… | Do this |
+|---|---|
+| `Python 3.12 not found` | `brew install python@3.12` |
+| `MISSING model files` | redo step 3 and check the two sizes |
+| `Address already in use` | the app is already running — or use `LIPSYNC_PORT=8001 ./run.sh` and open http://127.0.0.1:8001 |
+| The browser does not open | open http://127.0.0.1:8000 yourself |
+| A video format is not read | `brew install ffmpeg`, or convert the video to MP4 |
+
+## What `setup.sh` does
+It creates `.venv`, installs the pinned packages, checks the detector code against the notebook (checksums),
+creates `models/avhubert_slim.pt` (one time, ~1 min, needs ~5.5 GB RAM) and runs the unit tests.
+The model files are not in this repository (see `models/README.txt`):
+* `large_vox_iter5.pt` (3.91 GB, AV-HuBERT checkpoint)
+* `lipsync_detector_v4.pkl` (7 KB, trained classifiers)
 
 ## Verify the installation (recommended, in this order)
 ```bash

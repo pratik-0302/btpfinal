@@ -59,7 +59,7 @@ export function Heatmap({ values, min, max, height = 140, label }: {
       ref={ref}
       role="img"
       aria-label={label}
-      className="pixelated w-full rounded border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800"
+      className="pixelated w-full rounded-lg border border-white/10 bg-white/5"
       style={{ height }}
     />
   );
@@ -68,7 +68,7 @@ export function Heatmap({ values, min, max, height = 140, label }: {
 export function ColourScale({ min, max, unit }: { min: number; max: number; unit?: string }) {
   const stops = ANCHORS.map((c, i) => `rgb(${c.join(",")}) ${(i / (ANCHORS.length - 1)) * 100}%`).join(", ");
   return (
-    <div className="flex items-center gap-2 text-[11px] text-slate-500">
+    <div className="flex items-center gap-2 text-[11px] text-ink-2">
       <span className="tabular-nums">{min.toFixed(2)}</span>
       <div className="h-2 w-32 rounded" style={{ background: `linear-gradient(to right, ${stops})` }} />
       <span className="tabular-nums">{max.toFixed(2)}</span>

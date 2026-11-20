@@ -27,7 +27,7 @@ export function SyncMatrixPanel({ r }: { r: AnalysisResult }) {
       {m.values && m.values.length > 0 && (
         <div>
           <div className="mb-1 flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">
+            <span className="text-xs font-medium text-ink-2">
               Rows: audio offset from {first} ms (bottom) to +{last} ms (top) · columns: time. A bright horizontal line = the lips follow the audio at that offset.
             </span>
             <NewCalcBadge text={docs.sync_matrix ?? "Display only."} />
@@ -41,7 +41,7 @@ export function SyncMatrixPanel({ r }: { r: AnalysisResult }) {
       {driftData.length > 1 && (
         <div className="mt-4">
           <div className="mb-1 flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Best audio offset in 1-second windows (steady = steady timing)</span>
+            <span className="text-xs font-medium text-ink-2">Best audio offset in 1-second windows (steady = steady timing)</span>
             <NewCalcBadge text={docs.offset_drift ?? "Display only."} />
           </div>
           <div className="h-32">
@@ -51,7 +51,7 @@ export function SyncMatrixPanel({ r }: { r: AnalysisResult }) {
                 <XAxis dataKey="t" type="number" domain={["dataMin", "dataMax"]} tickFormatter={secondsTick} fontSize={10} />
                 <YAxis domain={[first, last]} fontSize={10} tickFormatter={(v: number) => `${v}`} />
                 <ReferenceLine y={0} stroke="currentColor" strokeOpacity={0.4} />
-                <Tooltip formatter={(v) => `${v} ms`} labelFormatter={(l) => `${Number(l).toFixed(1)} s`} contentStyle={{ fontSize: 12 }} />
+                <Tooltip formatter={(v) => `${v} ms`} labelFormatter={(l) => `${Number(l).toFixed(1)} s`} contentStyle={{ fontSize: 12 }} labelStyle={{ color: "#94a3b8" }} />
                 <Line type="stepAfter" dataKey="ms" name="best offset" stroke="#f59e0b" dot={{ r: 2 }} isAnimationActive={false} />
               </LineChart>
             </ResponsiveContainer>
